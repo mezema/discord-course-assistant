@@ -1,0 +1,6 @@
+name: discord-course-assistant
+runtime:
+  name: python
+  options:
+    virtualenv: venv
+description: A Discord bot frontend for discord-course-assistant

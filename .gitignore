@@ -1,0 +1,10 @@
+documents.json
+
+.env
+.env.dev
+
+.ipynb_checkpoints/
+*.nbconvert.ipynb
+__pycache__
+
+.vscode
