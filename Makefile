@@ -25,31 +25,31 @@ help: ## get a list of all the targets, and their short descriptions
 it-all: document-store vector-index backend frontend ## runs all automated steps to get the application up and running
 
 frontend: environment pulumi-config ## deploy the Discord bot server on AWS
-	@echo "###": Assumes you've set up your bot in Discord, see https://discordpy.readthedocs.io/en/stable/discord.html"
+	@echo "###: Assumes you've set up your bot in Discord, see https://discordpy.readthedocs.io/en/stable/discord.html"
 	pulumi -C bot/ up --yes
-	@echo "###": Allow 1-3 minutes for bot to start up"
+	@echo "###: Allow 1-3 minutes for bot to start up"
 	# for startup debug logs, run sudo cat /var/log/cloud-init-output.log on the instance
 	# for server logs, run tail -f /home/ec2-user/discord-course-assistant/bot/log.out on the instance
 
 local-frontend: environment ## run the Discord bot server locally
-	@echo "###": Assumes you've set up your bot in Discord, see https://discordpy.readthedocs.io/en/stable/discord.html"
+	@echo "###: Assumes you've set up your bot in Discord, see https://discordpy.readthedocs.io/en/stable/discord.html"
 	python3 bot/run.py --dev
 
 backend: modal-auth ## deploy the Q&A backend on Modal
-	@echo "###": Assumes you've set up the vector index"
+	@echo "###: Assumes you've set up the vector index"
 	modal deploy app.py
-	@echo "###": Gradio interface available at /gradio route"
+	@echo "###: Gradio interface available at /gradio route"
 
 cli-query: modal-auth ## run a query via a CLI interface
-	@echo "###": Assumes you've set up the vector storage"
+	@echo "###: Assumes you've set up the vector storage"
 	modal run app.py::stub.cli --query "${QUERY}"
 
 vector-index: modal-auth secrets ## sets up a FAISS vector index to the application
-	@echo "###": Assumes you've set up the document storage, see make document-store"
+	@echo "###: Assumes you've set up the document storage, see make document-store"
 	modal run app.py::stub.sync_vector_db_to_doc_db
 
 document-store: environment secrets ## creates a MongoDB collection that contains the document corpus
-	@echo "###": See docstore.py and the ETL notebook for details"
+	@echo "###: See docstore.py and the ETL notebook for details"
 	modal run etl/shared.py::flush_doc_db # start from scratch
 	modal run etl/videos.py --json-path data/videos.json
 	modal run etl/markdown.py --json-path data/lectures-2022.json
@@ -71,7 +71,7 @@ secrets: modal-auth  ## pushes secrets from .env to Modal
 	@modal secret create openai-api-key-larn OPENAI_API_KEY=$(OPENAI_API_KEY)
 
 modal-auth: environment ## confirms authentication with Modal, using secrets from `.env` file
-	@echo "###": If you haven't gotten a Modal token yet, run make modal-token"
+	@echo "###: If you haven't gotten a Modal token yet, run make modal-token"
 	@$(if $(value MODAL_TOKEN_ID),, \
 		$(error MODAL_TOKEN_ID is not set. Please set it before running this target.))
 	@$(if $(value MODAL_TOKEN_SECRET),, \
@@ -80,7 +80,7 @@ modal-auth: environment ## confirms authentication with Modal, using secrets fro
 
 modal-token: environment ## creates token ID and secret for authentication with modal
 	modal token new
-	@echo "###": Copy the token info from the file mentioned above into .env"
+	@echo "###: Copy the token info from the file mentioned above into .env"
 
 pulumi-config:  ## adds secrets and config from env file to Pulumi
 	$(if $(filter dev, $(value ENV)),pulumi -C bot/ stack select dev, \
@@ -101,7 +101,7 @@ environment: ## installs required environment for deployment and corpus generati
 	@if [ -z "$(ENV_LOADED)" ]; then \
         echo "Error: Configuration file not found"; \
     else \
-				echo "###": $(ENV_LOADED)"; \
+				echo "###: $(ENV_LOADED)"; \
 	fi
 	python3 -m pip install -qqq -r requirements.txt
 

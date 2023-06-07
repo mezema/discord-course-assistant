@@ -50,7 +50,7 @@ def main(auth, guilds, dev=False):
     # add our command
     @bot.slash_command(name="ask")
     @discord.option(
-        "question", str, description="A question about anything covered by FSDL."
+        "question", str, description="A question about anything covered by Full Stack Deep Learning."
     )
     async def answer(ctx, question: str):
         """Answers questions about FSDL material."""
@@ -97,7 +97,7 @@ def main(auth, guilds, dev=False):
         async with aiohttp.ClientSession() as session:
             try:
                 async with session.get(url=BACKEND_URL, params=payload) as response:
-                    assert response.status == 200
+                    response.raise_for_status()  # This will raise an HTTPError if the HTTP request returned an unsuccessful status code
                     json_content = await response.json()
                     return json_content["answer"]
             except Exception as e:
